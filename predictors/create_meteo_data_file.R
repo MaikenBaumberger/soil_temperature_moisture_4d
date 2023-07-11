@@ -1,6 +1,6 @@
 ## Daten von BayEOS herunterladen ##
 
-dir = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/meteo_data"
+setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/meteo_data")
 
 library(bayeos)
 bayeos.connect('my_connection')
@@ -49,7 +49,7 @@ enddate = "2023-07-01"
 
 #Temperatur Pflanzgarten Top
 
-Temp_Pflanzgarten = bayeos.getSeries(14493,from=startdate,until=enddate,maxrows = 20000000,Sys.setenv(TZ="Etc/GMT-1"))
+Temp_Pflanzgarten = bayeos.getSeries(1990,from=startdate,until=enddate,maxrows = 20000000,Sys.setenv(TZ="Etc/GMT-1"))
 AirTempP=fortify.zoo(Temp_Pflanzgarten)
 colnames(AirTempP)=c("datetime","AirTempP")
 AirTempP$date <- format(AirTempP$datetime,'%Y-%m-%d')
@@ -62,6 +62,22 @@ names(AirTempPHourely) <- c("datetime","AirTempPHourely")
 AirTempPHourely$AirTempPHourely[AirTempPHourely$AirTempPHourely < -10] = NA
 
 plot(AirTempPHourely$datetime,AirTempPHourely$AirTempPHourely)
+
+####################################################
+
+Temp_Weidenbrunnen = bayeos.getSeries(14493,from=startdate,until=enddate,maxrows = 20000000,Sys.setenv(TZ="Etc/GMT-1"))
+AirTempW=fortify.zoo(Temp_Weidenbrunnen)
+colnames(AirTempW)=c("datetime","AirTempW")
+AirTempW$date <- format(AirTempW$datetime,'%Y-%m-%d')
+AirTempW$hour <- format(AirTempW$datetime,'%H %Z')
+AirTempW$date_hour <- paste(AirTempW$date,AirTempW$hour)
+AirTempW$date_hour <- format(strptime(AirTempW$date_hour,"%Y-%m-%d %H"),"%Y-%m-%d %H:%M:%S %Z")
+AirTempW$date_hour <- as.POSIXct(strptime(AirTempW$date_hour,"%Y-%m-%d %H:%M:%S"))
+AirTempWHourely <- aggregate(AirTempW$AirTempW, by=list(Category=AirTempW$date_hour), FUN=mean)
+names(AirTempWHourely) <- c("datetime","AirTempWHourely")
+AirTempWHourely$AirTempWHourely[AirTempWHourely$AirTempWHourely < -10] = NA
+
+plot(AirTempWHourely$datetime,AirTempWHourely$AirTempWHourely)
 
 ####################################################
 
@@ -80,6 +96,15 @@ AirTempVHourely <- aggregate(AirTempV$AirTempV, by=list(Category=AirTempV$date_h
 names(AirTempVHourely) <- c("datetime","AirTempVHourely")
 
 plot(AirTempVHourely$datetime,AirTempVHourely$AirTempVHourely)
+
+####################################################
+
+plot(AirTempVHourely$datetime[1:500],AirTempVHourely$AirTempVHourely[1:500],col="red",type="l",
+     xlab="Date",ylab="Temperature [°C]",lwd=2)
+lines(AirTempWHourely$datetime[1:500],AirTempWHourely$AirTempWHourely[1:500],col="blue",lwd=2)
+lines(AirTempPHourely$datetime[1:500],AirTempPHourely$AirTempPHourely[1:500],col="purple",lwd=2)
+legend("topleft", legend=c("Temperature Voitsumra","Temperature Waldstein Pflanzgarten", "Temperature Waldstein Weidebrunnen"),
+       col=c("red","purple", "blue"), lty=1:1, cex=1,lwd=2)
 
 ####################################################
 
@@ -247,7 +272,7 @@ data_complete <- cbind(data_complete[1],round(data_complete[2:length(data_comple
 names(data_complete) = c("datetime","air_temperature_mountain","air_temperature_valley","precipitation","global_radiation","relative_humidity","air_pressure","wind_speed")
 
 
-write.csv(data_complete,"C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/meteo_data.csv", row.names = FALSE)
+write.csv(data_complete,"C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/meteo_data/meteo_data.csv", row.names = FALSE)
 
 
 ###############################################
