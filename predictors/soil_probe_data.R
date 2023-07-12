@@ -86,13 +86,19 @@ list_probes <- lapply(list_probes, function(x) x[,-1])
 
 names(list_probes$S02_001)
 
-#####################################
+######################################
 
 #delete double rows
 
 list_probes = lapply(list_probes, function(x) unique(x,by=date_hour))
 
-#####################################
+
+######################################
+
+######################################
+
+
+#save(list_probes,file = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/soil_probes_data/list_probe_data.Rdata")
 
 
 
