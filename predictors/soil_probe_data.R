@@ -24,6 +24,10 @@ names(list_probes_w)=names_w
 list_probes_m <- lapply(list_probes_m, transform, datetime = as.POSIXct(strptime(datetime, "%Y-%m-%d %H:%M:%S")))
 list_probes_w <- lapply(list_probes_w, transform, datetime = as.POSIXct(strptime(datetime, "%Y-%m-%d %H:%M:%S")))
 
+#
+list_probes_m <- lapply(list_probes_m, transform, date_hour = as.POSIXct(strptime(datetime, "%Y-%m-%d %H")))
+list_probes_w <- lapply(list_probes_w, transform, date_hour = as.POSIXct(strptime(datetime, "%Y-%m-%d %H")))
+
 # Spalte mit "Monthly" anfuegen:
 list_probes_m <- lapply(X = list_probes_m , FUN = cbind , "measurement"="monthly")
 list_probes_w <- lapply(X = list_probes_w , FUN = cbind , "measurement"="weekly")
@@ -36,82 +40,60 @@ names <- c(names_m,names_w)
 #####################################
 
 # probe data hourly
-list_probes_m <- lapply(list_probes_m, transform, date_hour = as.POSIXct(strptime(datetime, "%Y-%m-%d %H")))
-list_probes_w <- lapply(list_probes_w, transform, date_hour = as.POSIXct(strptime(datetime, "%Y-%m-%d %H"))) 
+#list_probes <- lapply(list_probes, transform, date_hour = as.POSIXct(strptime(datetime, "%Y-%m-%d %H")))
+
+list_probes = lapply(list_probes, transform, T_05 = ave(T_05, date_hour))
+list_probes = lapply(list_probes, transform, T_15 = ave(T_15, date_hour))
+list_probes = lapply(list_probes, transform, T_25 = ave(T_25, date_hour))
+list_probes = lapply(list_probes, transform, T_35 = ave(T_35, date_hour))
+list_probes = lapply(list_probes, transform, T_45 = ave(T_45, date_hour))
+list_probes = lapply(list_probes, transform, T_55 = ave(T_55, date_hour))
+list_probes = lapply(list_probes, transform, T_65 = ave(T_65, date_hour))
+list_probes = lapply(list_probes, transform, T_75 = ave(T_75, date_hour))
+list_probes = lapply(list_probes, transform, T_85 = ave(T_85, date_hour))
+list_probes = lapply(list_probes, transform, T_95 = ave(T_95, date_hour))
+list_probes = lapply(list_probes, transform, T_105 = ave(T_105, date_hour))
+list_probes = lapply(list_probes, transform, T_115 = ave(T_115, date_hour))
+
+list_probes = lapply(list_probes, transform, M_05 = ave(M_05, date_hour))
+list_probes = lapply(list_probes, transform, M_15 = ave(M_15, date_hour))
+list_probes = lapply(list_probes, transform, M_25 = ave(M_25, date_hour))
+list_probes = lapply(list_probes, transform, M_35 = ave(M_35, date_hour))
+list_probes = lapply(list_probes, transform, M_45 = ave(M_45, date_hour))
+list_probes = lapply(list_probes, transform, M_55 = ave(M_55, date_hour))
+list_probes = lapply(list_probes, transform, M_65 = ave(M_65, date_hour))
+list_probes = lapply(list_probes, transform, M_75 = ave(M_75, date_hour))
+list_probes = lapply(list_probes, transform, M_85 = ave(M_85, date_hour))
+list_probes = lapply(list_probes, transform, M_95 = ave(M_95, date_hour))
+list_probes = lapply(list_probes, transform, M_105 = ave(M_105, date_hour))
+list_probes = lapply(list_probes, transform, M_115 = ave(M_115, date_hour))
 
 
-list_probes_m= lapply(list_probes_m, transform, T_25_ave = ave(T_25, date_hour))
+#col_names = names(list_probes_m$S02_001)[2:27]
+#
+#for (i in col_names){
+#  list_probes_m = lapply(list_probes_m, transform, i = ave(i, date_hour))
+#}
 
-col_names = names(list_probes_m$S02_001)[2:27]
-
-for (i in col_names){
-  a = paste0(i,"_ave")
-  list_probes_m = lapply(list_probes_m, transform,  i = ave(i, date_hour))
-}
 
 ######################################
 
+#delete rows of minute resolution time
 
-paste0(col_names[2],"_ave")
+names(list_probes$S02_001)
 
+list_probes <- lapply(list_probes, function(x) x[,-1])
 
+names(list_probes$S02_001)
 
-lapply(myList, function(x) { x["ID"] <- NULL; x })
+#####################################
 
+#delete double rows
 
+list_probes = lapply(list_probes, function(x) unique(x,by=date_hour))
 
+#####################################
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-new = aggregate(list_probes_m$T_15, list_probes_m(list_probes_m$date_hour), FUN=mean) 
-
-
-
-
-lapply(list_probes_m, function(x) aggregate(. ~ date_hour, data = x, FUN = "mean"))
-
-
-list_probes_m_agg<-lapply(list_probes_m, function(i) {
-  aggregate(i, by=list(Category=list_probes_m$date_hour), FUN=mean)
-})
-
-
-list_probes_m <- aggregate(list_probes_m, by=list(Category=list_probes_m$date_hour), FUN=mean)
-
-
-
-
-
-
-
-Prec1Hourely <- aggregate(Prec1$Prec, by=list(Category=Prec1$date_hour), FUN=sum)
-  
-
-
-
-format(list_probes_m$datetime,'%Y-%m-%d')
-
-Prec1$date <- format(Prec1$datetime,'%Y-%m-%d')
-Prec1$hour <- format(Prec1$datetime,'%H %Z')
-Prec1$date_hour <- paste(Prec1$date,Prec1$hour)
-Prec1$date_hour <- format(strptime(Prec1$date_hour,"%Y-%m-%d %H"),"%Y-%m-%d %H:%M:%S %Z")
-Prec1$date_hour <- as.POSIXct(strptime(Prec1$date_hour,"%Y-%m-%d %H:%M:%S"))
-Prec1Hourely <- aggregate(Prec1$Prec, by=list(Category=Prec1$date_hour), FUN=sum)
 
 
 
