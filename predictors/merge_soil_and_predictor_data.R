@@ -98,7 +98,7 @@ head(predictor_set)
 #################################
 
 #exposition as category
-#
+#transforamtion o aspact values
 #
 #
 #
@@ -117,4 +117,70 @@ head(predictor_set)
 #
 #
 
+plot(predictor_set$date_hour,predictor_set$air_temperature_mountain)
 
+
+temperature_correction <- function(temp_mountain, temp_valley, elevation_location){
+  elevation_mountain = 765 #Pflanzgarten 765 Weidebrunnen 775
+  elevation_valley = 620  #Voitsumra
+  temp_location = round(temp_mountain-((temp_mountain-temp_valley)/(elevation_mountain-elevation_valley))*(elevation_mountain-elevation_location),2)
+}
+
+predictor_set$air_temperature_mountain = temperature_correction(predictor_set$air_temperature_mountain,
+                                                                predictor_set$air_temperature_valley,
+                                                                predictor_set$elevation) 
+
+predictor_set$air_temperature_mountain_1 = temperature_correction(predictor_set$air_temperature_mountain_1,
+                                                                predictor_set$air_temperature_valley_1,
+                                                                predictor_set$elevation) 
+
+predictor_set$air_temperature_mountain_2 = temperature_correction(predictor_set$air_temperature_mountain_2,
+                                                                  predictor_set$air_temperature_valley_2,
+                                                                  predictor_set$elevation) 
+
+predictor_set$air_temperature_mountain_3 = temperature_correction(predictor_set$air_temperature_mountain_3,
+                                                                  predictor_set$air_temperature_valley_3,
+                                                                  predictor_set$elevation)
+
+predictor_set$air_temperature_mountain_6 = temperature_correction(predictor_set$air_temperature_mountain_6,
+                                                                  predictor_set$air_temperature_valley_6,
+                                                                  predictor_set$elevation) 
+
+predictor_set$air_temperature_mountain_12 = temperature_correction(predictor_set$air_temperature_mountain_12,
+                                                                  predictor_set$air_temperature_valley_12,
+                                                                  predictor_set$elevation) 
+
+predictor_set$air_temperature_mountain_24 = temperature_correction(predictor_set$air_temperature_mountain_24,
+                                                                  predictor_set$air_temperature_valley_24,
+                                                                  predictor_set$elevation) 
+
+predictor_set$air_temperature_mountain_48 = temperature_correction(predictor_set$air_temperature_mountain_48,
+                                                                  predictor_set$air_temperature_valley_48,
+                                                                  predictor_set$elevation) 
+
+predictor_set$air_temperature_mountain_96 = temperature_correction(predictor_set$air_temperature_mountain_96,
+                                                                  predictor_set$air_temperature_valley_96,
+                                                                  predictor_set$elevation) 
+
+predictor_set$air_temperature_mountain_120 = temperature_correction(predictor_set$air_temperature_mountain_120,
+                                                                  predictor_set$air_temperature_valley_120,
+                                                                  predictor_set$elevation) 
+
+
+plot(predictor_set$date_hour,predictor_set$air_temperature_mountain)
+plot(predictor_set$date_hour,predictor_set$air_temperature_valley)
+
+hist(predictor_set$elevation,50)
+
+plot(meteo_data$datetime,meteo_data$air_temperature_valley,type="l",col="blue")
+lines(meteo_data$datetime,meteo_data$air_temperature_mountain,col="red")
+
+
+#temperatures voitsumra very low 
+
+predictor_set = predictor_set[ , -which(names(predictor_set) %in% c("air_temperature_valley_1","air_temperature_valley_2","air_temperature_valley_3",
+                                                                    "air_temperature_valley_6", "air_temperature_valley_12","air_temperature_valley_24",
+                                                                    "air_temperature_valley_48","air_temperature_valley_72","air_temperature_valley_96",
+                                                                    "air_temperature_valley_120"))]
+
+###########################
