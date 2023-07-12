@@ -42,6 +42,7 @@ names <- c(names_m,names_w)
 # probe data hourly
 #list_probes <- lapply(list_probes, transform, date_hour = as.POSIXct(strptime(datetime, "%Y-%m-%d %H")))
 
+list_probes = lapply(list_probes, transform, T_org = ave(T_05, date_hour))
 list_probes = lapply(list_probes, transform, T_05 = ave(T_05, date_hour))
 list_probes = lapply(list_probes, transform, T_15 = ave(T_15, date_hour))
 list_probes = lapply(list_probes, transform, T_25 = ave(T_25, date_hour))
@@ -55,6 +56,7 @@ list_probes = lapply(list_probes, transform, T_95 = ave(T_95, date_hour))
 list_probes = lapply(list_probes, transform, T_105 = ave(T_105, date_hour))
 list_probes = lapply(list_probes, transform, T_115 = ave(T_115, date_hour))
 
+list_probes = lapply(list_probes, transform, M_org = ave(M_org, date_hour))
 list_probes = lapply(list_probes, transform, M_05 = ave(M_05, date_hour))
 list_probes = lapply(list_probes, transform, M_15 = ave(M_15, date_hour))
 list_probes = lapply(list_probes, transform, M_25 = ave(M_25, date_hour))
@@ -98,7 +100,7 @@ list_probes = lapply(list_probes, function(x) unique(x,by=date_hour))
 ######################################
 
 
-#save(list_probes,file = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/soil_probes_data/list_probe_data.Rdata")
+save(list_probes,file = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/soil_probes_data/list_probe_data.Rdata")
 
 
 

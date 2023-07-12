@@ -27,19 +27,51 @@ table_probes[table_probes < -100] <- NA
 ##################################
 
 #shifted air temperature
-#
-#
-#
-#
-#
-#
+
+shift <- function(hours){
+  a <- rep(NA, hours)
+  seq = c(a, at_seq)
+  seq = head(seq,-hours)
+}
+
+at_seq = meteo_data$air_temperature_mountain
+
+meteo_data$air_temperature_mountain_1 = shift(1)
+meteo_data$air_temperature_mountain_2 = shift(2)
+meteo_data$air_temperature_mountain_3 = shift(3)
+meteo_data$air_temperature_mountain_6 = shift(6)
+meteo_data$air_temperature_mountain_12 = shift(12)
+meteo_data$air_temperature_mountain_24 = shift(24)
+meteo_data$air_temperature_mountain_48 = shift(48)
+meteo_data$air_temperature_mountain_72 = shift(72)
+meteo_data$air_temperature_mountain_96 = shift(96)
+meteo_data$air_temperature_mountain_120 = shift(120)
+
+at_seq = meteo_data$air_temperature_valley
+
+meteo_data$air_temperature_valley_1 = shift(1)
+meteo_data$air_temperature_valley_2 = shift(2)
+meteo_data$air_temperature_valley_3 = shift(3)
+meteo_data$air_temperature_valley_6 = shift(6)
+meteo_data$air_temperature_valley_12 = shift(12)
+meteo_data$air_temperature_valley_24 = shift(24)
+meteo_data$air_temperature_valley_48 = shift(48)
+meteo_data$air_temperature_valley_72 = shift(72)
+meteo_data$air_temperature_valley_96 = shift(96)
+meteo_data$air_temperature_valley_120 = shift(120)
 
 
-#merge soil probe data and meteo data
+
+####################################
+#merge meteo data and soil data
+
+table_probes$id  <- 1:nrow(table_probes)
 
 predictor_set = merge(table_probes,meteo_data, by.x = "date_hour",by.y = "datetime", all.x = T)
 
+predictor_set = predictor_set[order(predictor_set$id), ]
 
+head(predictor_set)
 
 ##################################
 
@@ -59,8 +91,11 @@ colnames(probe_meta_data_reduced)[colnames(probe_meta_data_reduced) == "ESC"] ="
 
 predictor_set = merge(predictor_set, probe_meta_data_reduced, by.x = "probe_name",by.y = "probe_id", all.x = T)
 
+predictor_set = predictor_set[order(predictor_set$id), ]
+
 head(predictor_set)
 
+#################################
 
 #exposition as category
 #
@@ -76,7 +111,7 @@ head(predictor_set)
 
 #elevation correction of temperature
 #
-#
+#temp_mountain - ((temp_mountain-temp_valley)/(height_mountain-height_valley))*(height_mountain-height_location)
 #
 #
 #
