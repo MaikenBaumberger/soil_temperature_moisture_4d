@@ -89,6 +89,18 @@ colnames(probe_meta_data_reduced)[colnames(probe_meta_data_reduced) == "BArt"] =
 colnames(probe_meta_data_reduced)[colnames(probe_meta_data_reduced) == "BTyp"] ="soil_type"
 colnames(probe_meta_data_reduced)[colnames(probe_meta_data_reduced) == "ESC"] ="esc"
 
+
+#exposition as category
+#transforamtion of aspact values
+
+probe_meta_data_reduced$northness <- cos(probe_meta_data_reduced$exposition * pi / 180)
+probe_meta_data_reduced$eastness <- sin(probe_meta_data_reduced$exposition * pi / 180)
+
+probe_meta_data_reduced$slope <- probe_meta_data_reduced$inclination
+
+
+probe_meta_data_reduced = probe_meta_data_reduced[ , -which(names(probe_meta_data_reduced) %in% c("exposition","inclination"))]
+
 predictor_set = merge(predictor_set, probe_meta_data_reduced, by.x = "probe_name",by.y = "probe_id", all.x = T)
 
 predictor_set = predictor_set[order(predictor_set$id), ]
@@ -96,26 +108,12 @@ predictor_set = predictor_set[order(predictor_set$id), ]
 head(predictor_set)
 
 #################################
-
-#exposition as category
-#transforamtion o aspact values
-#
-#
-#
-#
-#
-
-
-#################################
+                                   
 
 
 #elevation correction of temperature
-#
 #temp_mountain - ((temp_mountain-temp_valley)/(height_mountain-height_valley))*(height_mountain-height_location)
-#
-#
-#
-#
+
 
 plot(predictor_set$date_hour,predictor_set$air_temperature_mountain)
 
@@ -184,3 +182,11 @@ predictor_set = predictor_set[ , -which(names(predictor_set) %in% c("air_tempera
                                                                     "air_temperature_valley_120"))]
 
 ###########################
+
+
+
+
+
+
+
+
