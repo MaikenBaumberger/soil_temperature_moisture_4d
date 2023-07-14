@@ -36,7 +36,10 @@ files <- files[grepl(date,files)]
 ##################
 # Read raster and project
 ##################
-file <- rast(files)
+
+
+
+file <- terra::rast(files)
 crs(file) <- "+proj=stere +lat_0=90.0 +lon_0=10.0 +lat_ts=60.0 +a=6370040 +b=6370040 +units=m"
 
 ##################
@@ -48,6 +51,11 @@ plot(file[[4]])
 file
 
 ### optional:
-#library(mapview)
-#library(raster)
-#mapview(as(file[[1]],"Raster"))
+library(mapview)
+library(raster)
+file_rast = raster(file[[1]])
+mapview(file_rast)
+
+file_rast
+
+###################
