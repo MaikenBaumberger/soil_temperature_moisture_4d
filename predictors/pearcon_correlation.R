@@ -19,3 +19,28 @@ corrplot(res[1:20,21:47],method = 'color',tl.col = "black",na.label=" ")
 
 #library("PerformanceAnalytics")
 #chart.Correlation(res, histogram=TRUE, pch=19)
+
+
+###########    
+
+
+res = cor(predictor_set[60000:61000,], use="pairwise.complete.obs", method = "pearson")
+
+res = round(res, 2)
+
+corrplot(res,method = 'color')
+
+corrplot(res[1:10,28:37],method = 'color',tl.col = "black",na.label=" ")
+
+
+#library("PerformanceAnalytics")
+#chart.Correlation(res, histogram=TRUE, pch=19)
+
+
+
+
+plot(predictor_set$air_temperature_mountain[60000:60120],type="l",col="blue",lwd=2,ylim=c(-2,30),ylab="Temperature [°C]")
+lines(predictor_set$T_05[60000:60120],col="red",lwd=2)
+lines(predictor_set$T_15[60000:60120],col="orange",lwd=2)
+lines(predictor_set$T_25[60000:60120],col="yellow",lwd=2)
+
