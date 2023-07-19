@@ -1,10 +1,11 @@
 
+library(raster)
+##########################
+#data
 
 probe_meta_data_monthly <- Carbon4D::load_probe_meta_data_monthly("C:/Users/maike/Desktop/Carbon4D/DownloadGitData")
 probe_meta_data_weekly <- Carbon4D::load_probe_meta_data_weekly("C:/Users/maike/Desktop/Carbon4D/DownloadGitData")
 probe_meta_data = rbind(probe_meta_data_monthly,probe_meta_data_weekly)
-
-library(raster)
 
 soil_texture <- raster("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/static_raster_variables/Soil_Texture_Fichtel_Mountains.grd")
 soil_type <- raster("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/static_raster_variables/Soil_Type_Fichtel_Mountains.grd")
@@ -14,20 +15,15 @@ inclination <- raster("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_m
 exposition <- raster("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/static_raster_variables/Exposition_Fichtel_Mountains.tif")
 topo_wetness <- raster("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/static_raster_variables/Topographic_Wettness_Fichtel_Mountains.tif")#calculated from dem using qgis
 
-
 probes = data.frame(probe_meta_data$probe_id,probe_meta_data$lat,probe_meta_data$lon)
 
 names(probes) = c("probe_id","lat","lon")
 
+
+###########################
+#projection
+
 probes$coordinates <- sf::st_as_sf(probes,coords = c("lon","lat"), crs = 4326)
-
-#probes <- SpatialPointsDataFrame(coords = c(probes[,c("lon", "lat")]),
-#                                             proj4string = CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"),data = probes)
-
-
-#probes <- SpatialPointsDataFrame(coords = c(probes[,c("lon", "lat")]),
-#                                 proj4string = CRS("+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs"),
-#                                 data = probes)
 
 soil_texture_2 <- projectRaster(soil_texture,crs = 4326,method = "ngb")
 soil_type_2 <- projectRaster(soil_type,crs = 4326,method = "ngb")
@@ -37,13 +33,18 @@ inclination_2 <- projectRaster(inclination,crs = 4326,method = "ngb")
 exposition_2 <- projectRaster(exposition,crs = 4326,method = "ngb")
 topo_wetness_2 <- projectRaster(topo_wetness,crs = 4326,method = "ngb")
 
-hist(soil_texture_2,breaks = 200)
-hist(land_use_2,breaks = 200)
+#mapview::mapview(land_use_2)+mapview::mapview(probes$coordinates)
+#plot(topo_wetness_2)
+#plot(probes$coordinates,add = TRUE)
 
-mapview::mapview(topo_wetness_2)+mapview::mapview(probes$coordinates)
+##########################
+#exposition to northness and eastness
 
-plot(topo_wetness_2)
-plot(probes$coordinates,add = TRUE)
+northness <- cos(exposition_2 * pi / 180)
+eastness <- sin(exposition_2 * pi / 180)
+
+###########################
+#extract raster values 
 
 
 ext_soil_texture = extract(soil_texture_2,probes$coordinates,df=T)
@@ -61,33 +62,20 @@ probes$land_use = ext_land_use$landuse
 ext_inclination = extract(inclination_2,probes$coordinates,df=T)
 probes$inclination = ext_inclination$Inclination_Fichtel_Mountains
 
-ext_exposition = extract(exposition_2,probes$coordinates,df=T)
-probes$exposition = ext_exposition$Exposition_Fichtel_Mountains
+ext_northness = extract(northness,probes$coordinates,df=T)
+probes$northness = ext_northness$layer
+
+ext_eastness = extract(eastness,probes$coordinates,df=T)
+probes$eastness = ext_eastness$layer
 
 ext_topo_wetness = extract(topo_wetness_2,probes$coordinates,df=T)
 probes$topo_wetness = ext_topo_wetness$Topographic_Wettness_Fichtel_Mountains
 
-#probes$coordinates = probes$coordinates$geometry
-
+################################
 #SpatialPointsDataFrame
 
-probes2 = probes
+probes_shape <- SpatialPointsDataFrame(coords = c(probes[,c("lon", "lat")]),proj4string = CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"),data = probes)
 
-probes2 <- sf::st_as_sf(probes2$coordinates,coords = c("lon","lat"), crs = 4326)
-
-probes2$topo_wetness = probes$topo_wetness
-
-#names = names(probes)
-
-#probes <- sf::st_as_sf(probes,coords = c("lon","lat"), crs = 4326)
-
-#names(probes) = c(names,"geometry")
-
-mapview::mapview(probes2$geometry,zcol="topo_wetness")
-
-
-probes3 <- SpatialPointsDataFrame(coords = c(probes[,c("lon", "lat")]),proj4string = CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"),data = probes)
-
-mapview::mapview(probes3,zcol="topo_wetness")                                 
+mapview::mapview(probes_shape,zcol="northness")                                 
 
 
