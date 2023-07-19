@@ -24,8 +24,8 @@ for (i in 1:length(datetime)) {
 }
 datetime_u1
 
-ndvi2 = ndvi[[2:3]]
-plot(ndvi2)
+#ndvi2 = ndvi[[2:3]]
+#plot(ndvi2)
 
 #ndvi_2= projectRaster(ndvi, crs = 4326)
 #Warning messages:
@@ -36,10 +36,10 @@ plot(ndvi2)
 
 
 
-ext_ndvi = extract(ndvi,predictor_set$coordinates,df=T)
+#ext_ndvi = extract(ndvi,predictor_set$coordinates,df=T)
 
-id_datetime= c("id",datetime)
-data.frame(names(ext_ndvi),id_datetime)
+#id_datetime= c("id",datetime)
+#data.frame(names(ext_ndvi),id_datetime)
 
 #######################################
 
@@ -63,10 +63,11 @@ probes_ndvi_t = setNames(data.frame(t(probes_ndvi[,-1])), probes_ndvi[,1])
 
 probes_ndvi_t= cbind(datetime_u1,probes_ndvi_t)
 
+
 plot(probes_ndvi_t$datetime_u1, probes_ndvi_t$S02_002)
 
 #calculate mean of douple time stamps
-probes_ndvi_t_2 = data.frame(do.call(rbind,lapply(lapply(split(probes_ndvi_t,probes_ndvi_t$datetime_u1),`[`,2:101),colMeans,na.rm=T)))
+probes_ndvi_t_2 = data.frame(do.call(rbind,lapply(lapply(split(probes_ndvi_t,probes_ndvi_t$datetime_u1),`[`,2:265),colMeans,na.rm=T)))
 
 
 #######################################
@@ -88,6 +89,7 @@ probes_ndvi_t_2$time = as.POSIXct(strptime(probes_ndvi_t_2$time,"%Y-%m-%d %H:%M:
 
 probes_ndvi_hourly = merge(ts_seq,probes_ndvi_t_2,by.x="datetime",by.y="time",all.x=T)
 
+
 ########################################
 
 #linear interpolation
@@ -101,17 +103,15 @@ plot(probes_ndvi_hourly$datetime,probes_ndvi_hourly$S04_009)
 probes_ndvi_hourly <- cbind(probes_ndvi_hourly[1],round(probes_ndvi_hourly[2:length(probes_ndvi_hourly)], digits = 2))
 
 
-
 #########################################
 
 
 #melt(probes_ndvi_hourly, na.rm = FALSE, value.name = “datetime”, id = 'columns')
 probes_ndvi_reshape = reshape2::melt(probes_ndvi_hourly, id = "datetime") 
 
-names(probes_ndvi_reshape) = c("datetime","probe_id","ndvi")
+names(probes_ndvi_reshape) = c("date_hour","probe_name","ndvi")
 
-probes_ndvi_reshape_1 <- probes_ndvi_reshape[1:400000, ] 
-probes_ndvi_reshape_2 <- probes_ndvi_reshape[400001:828100, ] 
+
 #########################################
 #merge NDVI and predictor stack
 
@@ -121,13 +121,12 @@ load(file = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d
 
 head(predictor_set)
 
-predictor_set = merge(predictor_set,probes_ndvi_reshape_1, by.x = c("date_hour","probe_name"), by.y =  c("datetime","probe_id"),all.y=T)
-predictor_set = merge(predictor_set,probes_ndvi_reshape_2, by.x = c("date_hour","probe_name"), by.y =  c("datetime","probe_id"),all.y=T)
+predictor_set_2 = merge(predictor_set,probes_ndvi_reshape, by.x = c("probe_name","date_hour"), by.y =  c("probe_name","date_hour"),all.x=T)
 
-head(predictor_set)
-
-plot(predictor_set$date_hour,predictor_set$ndvi)
+head(predictor_set_2)
 
 
+plot(predictor_set_2$date_hour,predictor_set_2$ndvi)
 
 
+###########################################
