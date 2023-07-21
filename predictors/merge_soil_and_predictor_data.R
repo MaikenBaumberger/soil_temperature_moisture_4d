@@ -186,7 +186,7 @@ predictor_set = predictor_set[ , -which(names(predictor_set) %in% c("air_tempera
 
 
 
-save(predictor_set,file = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/predictor_set.Rdata")
+#save(predictor_set,file = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/predictor_set_complete.Rdata")
 
 
 
