@@ -145,6 +145,18 @@ probes$eastness = ext_eastness$layer
 ext_topo_wetness = extract(topo_wetness_2,probes$coordinates,df=T)
 probes$topo_wetness = ext_topo_wetness$Topographic_Wettness_Fichtel_Mountains
 
+
+probes_reduced = cbind(probes[1],probes[5:12])
+
+predictor_set = merge(predictor_set, probes_reduced, by.x = "probe_name",by.y = "probe_id", all.x = T)
+
+predictor_set = predictor_set[order(predictor_set$id), ]
+
+head(predictor_set)
+
+
+
+head(predictor_set)
 ################################
 
 #################################
@@ -155,7 +167,7 @@ probes$topo_wetness = ext_topo_wetness$Topographic_Wettness_Fichtel_Mountains
 #temp_mountain - ((temp_mountain-temp_valley)/(height_mountain-height_valley))*(height_mountain-height_location)
 
 
-plot(predictor_set$date_hour,predictor_set$air_temperature_mountain)
+#plot(predictor_set$date_hour,predictor_set$air_temperature_mountain)
 
 
 temperature_correction <- function(temp_mountain, temp_valley, elevation_location){
