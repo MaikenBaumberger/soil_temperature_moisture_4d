@@ -89,9 +89,9 @@ inclination <- raster("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_m
 exposition <- raster("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/static_raster_variables/Exposition_Fichtel_Mountains.tif")
 topo_wetness <- raster("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/static_raster_variables/Topographic_Wettness_Fichtel_Mountains.tif")#calculated from dem using qgis
 
-probes = data.frame(probe_meta_data$probe_id,probe_meta_data$lat,probe_meta_data$lon)
+probes = data.frame(probe_meta_data$probe_id,probe_meta_data$plot_id,probe_meta_data$lat,probe_meta_data$lon)
 
-names(probes) = c("probe_id","lat","lon")
+names(probes) = c("probe_id","plot_id","lat","lon")
 
 
 ###########################
@@ -146,7 +146,7 @@ ext_topo_wetness = extract(topo_wetness_2,probes$coordinates,df=T)
 probes$topo_wetness = ext_topo_wetness$Topographic_Wettness_Fichtel_Mountains
 
 
-probes_reduced = cbind(probes[1],probes[5:12])
+probes_reduced = cbind(probes[1],probes[5:13])
 
 predictor_set = merge(predictor_set, probes_reduced, by.x = "probe_name",by.y = "probe_id", all.x = T)
 
@@ -459,9 +459,23 @@ predictor_set_2 = merge(predictor_set_2,probes_radar_reshape, by.x = c("probe_na
 
 head(predictor_set_2)
 
+predictor_set_2$plot_id = predictor_set_2$coordinates$plot_id
+
+predictor_set_2 = predictor_set_2[ , -which(names(predictor_set_2) %in% c("coordinates"))]
+
+predictor_set_2$date = format(as.POSIXct(predictor_set_2$date_hour,
+                                          format = '%Y-%m-%d %H:%M:%S'),
+                               format = '%Y-%m-%d')
+
+head(predictor_set_2)
+
+data.table::uniqueN(predictor_set_2$probe_name)
+data.table::uniqueN(predictor_set_2$date)
+data.table::uniqueN(predictor_set_2$plot_id)
+
 #############################
 
-#save(predictor_set_2,file = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/predictor_set_complete.Rdata")
+#save(predictor_set_2,file = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/predictor_set_complete_plot_id.Rdata")
 
 
 
