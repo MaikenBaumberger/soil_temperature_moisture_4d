@@ -113,7 +113,6 @@ test_set$depths = as.numeric(test_set$depths)
 
 cv_spacetimefolds <- CAST::CreateSpacetimeFolds(train_set,spacevar = "plot_id",timevar ="date", k=5)#
 
-
 #hyperparameter = expand.grid(mtry = seq(2,15),
 #                       min.node.size = c(5,10,15),
 #                       splitrule = c("variance"))
@@ -121,6 +120,12 @@ cv_spacetimefolds <- CAST::CreateSpacetimeFolds(train_set,spacevar = "plot_id",t
 hyperparameter = expand.grid(mtry = 2,
                              min.node.size = 5,
                              splitrule = "variance")
+
+setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/model_results/compare_train_ffs")
+
+save(train_set,file = "train_set.Rdata")
+save(test_set,file = "test_set.Rdata")
+save(cv_spacetimefolds,file = "cv_spacetimefolds.Rdata")
 
 
 predictors <- c("air_temperature_mountain","precipitation","global_radiation",
@@ -166,9 +171,10 @@ ffsmodel
 varImp(ffsmodel,conditional=TRUE)
 plot(varImp(ffsmodel))
 
-setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/model_results")
+setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/model_results/compare_train_ffs")
 
-#save(rfmodel,file = "rf_model_spacetimefolds.Rdata")
+save(rfmodel,file = "rf_model_spacetimefolds.Rdata")
+save(ffsmodel,file = "ffs_model_spacetimefolds.Rdata")
 
 
 #############################################
