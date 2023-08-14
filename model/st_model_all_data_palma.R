@@ -2,9 +2,6 @@
 .libPaths("/home/m/m_baum34/r_packages/")
 
 library(doParallel)
-cl <- makeCluster(5)
-registerDoParallel(cl)
-
 library("CAST")
 library("caret")
 
@@ -24,6 +21,11 @@ predictors <- c("air_temperature_mountain","precipitation","global_radiation",
                 "soil_texture","soil_type","elevation","land_use","inclination","northness","eastness","topo_wetness","ndvi","ndwi","radar","depths")
 
 response <- "soil_temperature" 
+
+
+cl <- makeCluster(10)
+registerDoParallel(cl)
+
 
 
 rfmodel = caret::train(x =  train_set[,predictors],
