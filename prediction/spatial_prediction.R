@@ -514,5 +514,5 @@ plot(prediction_75, col = cols, breaks = b, axes=F,legend=F)
 
 ##############################
 
-plot(static_raster$inclination/3, col = cols, breaks = b, axes=F,legend=T)
+plot(static_raster$inclination, col = cols, breaks = b, axes=F,legend=T)
 

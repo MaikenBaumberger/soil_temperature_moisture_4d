@@ -267,7 +267,7 @@ boxplot(range_seasons)
 
 ########################################
 
-boxplot(range_location,range_seasons,test$range, names=c("space","time","depth"),ylim=c(0,30))
+boxplot(range_location,range_seasons,test$range, names=c("space","time","depth"),ylim=c(0,30),ylab="Soil Temperature [°C]")
 
 ########################################
 
