@@ -16,13 +16,29 @@ Dataexample$Y <- as.numeric(meteo_data$air_temperature_mountain)
 
 #https://stackoverflow.com/questions/71312435/finding-the-slope-of-a-linear-trend-line-in-a-moving-window-in-r
 
-trend = rollapply(Dataexample, 2160, function(d)lm(Y~X, data.frame(d))$coefficients, by.column=FALSE,align = "right",fill = NA)
+trend_week = rollapply(Dataexample, 168, function(d)lm(Y~X, data.frame(d))$coefficients, by.column=FALSE,align = "right",fill = NA)
+trend_month = rollapply(Dataexample, 720, function(d)lm(Y~X, data.frame(d))$coefficients, by.column=FALSE,align = "right",fill = NA)
+trend_3month = rollapply(Dataexample, 2160, function(d)lm(Y~X, data.frame(d))$coefficients, by.column=FALSE,align = "right",fill = NA)
 
-num = c(1:18240)
+trend_week = data.frame(trend_week)
+trend_month = data.frame(trend_month)
+trend_3month = data.frame(trend_3month)
 
-plot(trend[,1],trend[,2])
+trends = cbind(meteo_data[1],trend_week$X,trend_month$X,trend_3month$X)
 
-trend = data.frame(trend)
+names(trends) = c("datetime","trend_week","trend_month","trend_3month")
 
-plot(trend$X,type="l")
+
+
+
+
+
+
+plot(trend_week$X,type="l")
+lines(meteo_data$air_temperature_mountain/10000)
+
+plot(trend_month$X,type="l")
+lines(meteo_data$air_temperature_mountain/10000)
+
+plot(trend_3month$X,type="l")
 lines(meteo_data$air_temperature_mountain/10000)
