@@ -151,6 +151,7 @@ predictors <- c("air_temperature_mountain","precipitation","global_radiation","r
 response <- "soil_temperature" 
 
 Sys.time()
+
 rfmodel = caret::train(x =  train_set[,predictors],
                        y =   train_set[,response],
                        method = "ranger",
@@ -161,6 +162,7 @@ rfmodel = caret::train(x =  train_set[,predictors],
                                                 indexOut = cv_spacetimefolds$indexOut,
                                                 savePredictions = "final"),
                        importance = "permutation")
+
 Sys.time()
 
 rfmodel
