@@ -142,6 +142,13 @@ rsq(month_10$soil_temperature,month_10$prediction)
 rsq(month_11$soil_temperature,month_11$prediction)
 rsq(month_12$soil_temperature,month_12$prediction)
 
+################################################
+
+
+plot(test_set$date_hour,test_set$soil_temperature,ylab="soil temperature [°C]",xlab="")
+points(test_set$date_hour,test_set$prediction,col="red")
+
+
 #################################################
 
 S03_011 <- test_set[test_set$probe_name == "S03_010", ] 
