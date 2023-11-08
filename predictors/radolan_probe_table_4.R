@@ -101,6 +101,8 @@ radolan_sum_24_48 = rbind(na24,radolan_sum_0_24)[1:nrow(radolan_sum_0_24),]
 
 radolan_sum_48_72 = rbind(na24,na24,radolan_sum_0_24)[1:nrow(radolan_sum_0_24),]
 
+radolan_sum_week = data.frame(zoo::rollsum(radolan_table[2:length(radolan_table)],168, align = "right",fill=NA))
+
 
 radolan_sum_0_24 = cbind(radolan_table[1],radolan_sum_0_24)
 
@@ -108,9 +110,11 @@ radolan_sum_24_48 = cbind(radolan_table[1],radolan_sum_24_48)
 
 radolan_sum_48_72 = cbind(radolan_table[1],radolan_sum_48_72)
 
+radolan_sum_week = cbind(radolan_table[1],radolan_sum_week)
+
 ##########################################################################
 
-
+#############################################################################
 
 
 radolan_sums = reshape2::melt(radolan_table, id = "datetime")
@@ -137,9 +141,11 @@ radolan_sums$prec_sum_24_48=radolan_sums_24_48$value
 radolan_sums_48_72 = reshape2::melt(radolan_sum_48_72, id = "datetime")
 radolan_sums$prec_sum_48_72=radolan_sums_48_72$value
 
+radolan_sums_week = reshape2::melt(radolan_sum_week, id = "datetime")
+radolan_sums$radolan_sum_week=radolan_sums_week$value
 
-names(radolan_sums)=  c("datetime","probe_name","prec","prec_sum_0_6","prec_sum_6_12","prec_sum_12_18","prec_sum_18_24",
-                        "prec_sum_0_24","prec_sum_24_48","prec_sum_48_72")
+names(radolan_sums)=  c("datetime","probe_name","radolan","radolan_sum_0_6","radolan_sum_6_12","radolan_sum_12_18","radolan_sum_18_24",
+                        "radolan_sum_0_24","radolan_sum_24_48","radolan_sum_48_72","radolan_sum_week")
 
 
 # 
@@ -344,6 +350,6 @@ legend("top", legend=c("Bodenfeuchte Waldstein", "Bodenfeuchte Voitsumra", "Nied
 
 
 setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/radolan_data_study_area")
-save(radolan_sums, file = "radolan_table_sums_2.RData")
+save(radolan_sums, file = "radolan_table_sums_4.RData")
 
 

@@ -148,7 +148,7 @@ head(predictor_set)
 
 #precipitaion
 
-load("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/radolan_data_study_area/radolan_table_sums_2.RData")
+load("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/radolan_data_study_area/radolan_table_sums_4.RData")
 
 head(radolan_sums)
 
@@ -573,7 +573,7 @@ data.table::uniqueN(predictor_set_2$plot_id)
 
 #############################
 
-save(predictor_set_2,file = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/predictor_set_complete_seasons_radolan_2.Rdata")
+save(predictor_set_2,file = "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/predictor_set_complete_seasons_radolan_4.Rdata")
 
 
 head(predictor_set_2)

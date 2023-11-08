@@ -207,13 +207,13 @@ meteo_data$air_temperature_month = zoo::rollmean(meteo_data$air_temperature_moun
 #position = 6901 #"2022-03-15 12:00:00 CET"
 #position = 7645 #"2022-04-15 12:00:00 CEST"
 #position = 8365 #"2022-05-15 12:00:00 CEST"
-position = 9109 #"2022-06-15 12:00:00 CEST"
+#position = 9109 #"2022-06-15 12:00:00 CEST"
 #position = 9829 #"2022-07-15 12:00:00 CEST"
 #position = 10573 #"2022-08-15 12:00:00 CEST"
 #position = 11317 #"2022-09-15 12:00:00 CEST"
 #position = 12037 #"2022-10-15 12:00:00 CEST"
 #position = 12781 #"2022-11-15 12:00:00 CET"
-#position = 13501 #"2022-12-15 12:00:00 CET"
+position = 13501 #"2022-12-15 12:00:00 CET"
 
 meteo_data$datetime[position]
 
@@ -364,6 +364,6 @@ b <- seq(from=0,to=20,by=0.25)
 
 #par(mfrow = c(2, 1),mar = c(0, 0, 0, 0),mai = c(0, 0, 0, 0))
 #plot(prediction, col=viridisLite::viridis(100),main="prediction",axes=F,legend=F)
-plot(prediction,col=cols,breaks= b, main="Soil temperature Prediction with AOA June",axes=F,legend=F)
+plot(prediction,col=cols,breaks= b, main="Soil temperature Prediction with AOA December",axes=F,legend=F)
 plot(aoa_sub,col=c("magenta","transparent"),add=T,plg=list(x="topleft",box.col="black",bty="o",title="AOA"),axes=F,legend=F)
 
