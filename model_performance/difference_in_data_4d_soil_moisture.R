@@ -1,4 +1,3 @@
-
 library("CAST")
 library("caret")
 
@@ -10,22 +9,21 @@ load("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/p
 #prediction pro tiefe eine spalte evt. merge mit datensatz
 #für test prediction daten verwenden
 
-setwd("C:/Users/maike/Desktop/Carbon4D/Palma/soil_temperature_model_v2")
+setwd("C:/Users/maike/Desktop/Carbon4D/Palma/soil_moisture_model_v1")
 load("test_set.Rdata")
 load("train_set.Rdata")
 load("ffs_model.Rdata")
 
 predictor_set_2 <- subset(predictor_set_2,
-                          date_hour >= as.POSIXct('2022-01-01 00:00') &
-                            date_hour <= as.POSIXct('2022-12-31 23:59'))
+             date_hour >= as.POSIXct('2022-01-01 00:00') &
+               date_hour <= as.POSIXct('2022-12-31 23:59'))
 
 
 
 predictor_set_2 = predictor_set_2[complete.cases(predictor_set_2$date_hour),]
 
 summary(test_set)
-
-#test_set = rbind(train_set,test_set)
+test_set = rbind(train_set,test_set)
 
 test_set[,"prediction"]=round(predict.train(object=ffsmodel, newdata = test_set,na.action = na.omit),digits = 2)
 
@@ -133,50 +131,42 @@ head(dt_85[55:55])
 #version 2 prediction of test set and train set
 
 test = prediction_by_depth[62:70]
-names(test) = c("T_05", "T_15", "T_25", "T_35", "T_45", "T_55", "T_65", "T_75", "T_85")
+names(test) = c("M_05", "M_15", "M_25", "M_35", "M_45", "M_55", "M_65", "M_75", "M_85")
 
 names(prediction_by_depth)
 df = cbind(prediction_by_depth[1:3],prediction_by_depth[30:70])
 names(df)
-names(df)[names(df) == 'prediction_05'] <- 'T_05'
-names(df)[names(df) == 'prediction_15'] <- 'T_15'
-names(df)[names(df) == 'prediction_25'] <- 'T_25'
-names(df)[names(df) == 'prediction_35'] <- 'T_35'
-names(df)[names(df) == 'prediction_45'] <- 'T_45'
-names(df)[names(df) == 'prediction_55'] <- 'T_55'
-names(df)[names(df) == 'prediction_65'] <- 'T_65'
-names(df)[names(df) == 'prediction_75'] <- 'T_75'
-names(df)[names(df) == 'prediction_85'] <- 'T_85'
+names(df)[names(df) == 'prediction_05'] <- 'M_05'
+names(df)[names(df) == 'prediction_15'] <- 'M_15'
+names(df)[names(df) == 'prediction_25'] <- 'M_25'
+names(df)[names(df) == 'prediction_35'] <- 'M_35'
+names(df)[names(df) == 'prediction_45'] <- 'M_45'
+names(df)[names(df) == 'prediction_55'] <- 'M_55'
+names(df)[names(df) == 'prediction_65'] <- 'M_65'
+names(df)[names(df) == 'prediction_75'] <- 'M_75'
+names(df)[names(df) == 'prediction_85'] <- 'M_85'
 
 ############################################
 #version 3 original data of test and train set
 
-# df = prediction_by_depth
-# 
-# df= df[complete.cases(df$prediction_35),]
-# test = predictor_set_2[17:25]
+#df = prediction_by_depth
+
+#df= df[complete.cases(df$prediction_35),]
+#test = predictor_set_2[17:25]
 
 
 ############################################
 
 
-###########################################
-###########################################
-
-load("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/predictor_set_complete_seasons.Rdata")
-
-predictor_set_2$max_temp = pmax(predictor_set_2[4:12])
-
-head(predictor_set_2)
-
-max(predictor_set_2[4:12])
-
-test = predictor_set_2[4:12]
-
 library(dplyr)
 
-test = test%>% rowwise() %>% mutate(max = max(T_05, T_15, T_25, T_35, T_45, T_55, T_65, T_75, T_85))
-test = test%>% rowwise() %>% mutate(min = min(T_05, T_15, T_25, T_35, T_45, T_55, T_65, T_75, T_85))
+#test = test%>% rowwise() %>% mutate(max = max(T_05, T_15, T_25, T_35, T_45, T_55, T_65, T_75, T_85))
+#test = test%>% rowwise() %>% mutate(min = min(T_05, T_15, T_25, T_35, T_45, T_55, T_65, T_75, T_85))
+
+test = test%>% rowwise() %>% mutate(max = max(M_05, M_15, M_25, M_35, M_45, M_55, M_65, M_75, M_85))
+test = test%>% rowwise() %>% mutate(min = min(M_05, M_15, M_25, M_35, M_45, M_55, M_65, M_75, M_85))
+
+
 head(test)
 test$range = test$max - test$min
 
@@ -185,15 +175,15 @@ boxplot(test$range)
 ##################################
 #tagesgang
 
-df = df#predictor_set_2
+#df = predictor_set_2
 
 df_max = df %>%
   group_by(probe_name,date) %>%
-  summarise(max_05 = max(T_05, na.rm=TRUE))
+  summarise(max_05 = max(M_05, na.rm=TRUE))
 
 df_min = df %>%
   group_by(probe_name,date) %>%
-  summarise(min_05 = min(T_05, na.rm=TRUE))
+  summarise(min_05 = min(M_05, na.rm=TRUE))
 
 head(df_max)
 head(df_min)
@@ -213,11 +203,11 @@ df2 = df#predictor_set_2
 
 df2_max = (df2 %>%
   group_by(date_hour) %>%
-  summarise(max_05 = max(T_05, na.rm=TRUE)))
+  summarise(max_05 = max(M_05, na.rm=TRUE)))
 
 df2_min = df2 %>%
   group_by(date_hour) %>%
-  summarise(min_05 = min(T_05, na.rm=TRUE))
+  summarise(min_05 = min(M_05, na.rm=TRUE))
 
 head(df2_max)
 head(df2_min)
@@ -235,77 +225,77 @@ df2 = df#predictor_set_2
 
 df2_max = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(max_05 = max(T_05, na.rm=TRUE)))
+                    summarise(max_05 = max(M_05, na.rm=TRUE)))
 
 df2_max$max_15 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(max_15 = max(T_15, na.rm=TRUE)))[,2]
+                    summarise(max_15 = max(M_15, na.rm=TRUE)))[,2]
 
 df2_max$max_25 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(max_25 = max(T_25, na.rm=TRUE)))[,2]
+                    summarise(max_25 = max(M_25, na.rm=TRUE)))[,2]
 
 df2_max$max_35 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(max_35 = max(T_35, na.rm=TRUE)))[,2]
+                    summarise(max_35 = max(M_35, na.rm=TRUE)))[,2]
 
 df2_max$max_45 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(max_45 = max(T_45, na.rm=TRUE)))[,2]
+                    summarise(max_45 = max(M_45, na.rm=TRUE)))[,2]
 
 df2_max$max_55 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(max_55 = max(T_55, na.rm=TRUE)))[,2]
+                    summarise(max_55 = max(M_55, na.rm=TRUE)))[,2]
 
 df2_max$max_65 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(max_65 = max(T_65, na.rm=TRUE)))[,2]
+                    summarise(max_65 = max(M_65, na.rm=TRUE)))[,2]
 
 df2_max$max_75 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(max_75 = max(T_75, na.rm=TRUE)))[,2]
+                    summarise(max_75 = max(M_75, na.rm=TRUE)))[,2]
 
 df2_max$max_85 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(max_85 = max(T_85, na.rm=TRUE)))[,2]
+                    summarise(max_85 = max(M_85, na.rm=TRUE)))[,2]
 
 head(df2_max)
 
 df2_min = df2 %>%
                     group_by(date_hour) %>%
-                    summarise(min_05 = min(T_05, na.rm=TRUE))
+                    summarise(min_05 = min(M_05, na.rm=TRUE))
 
 df2_min$min_15 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(min_15 = min(T_15, na.rm=TRUE)))[,2]
+                    summarise(min_15 = min(M_15, na.rm=TRUE)))[,2]
 
 df2_min$min_25 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(min_25 = min(T_25, na.rm=TRUE)))[,2]
+                    summarise(min_25 = min(M_25, na.rm=TRUE)))[,2]
 
 df2_min$min_35 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(min_35 = min(T_35, na.rm=TRUE)))[,2]
+                    summarise(min_35 = min(M_35, na.rm=TRUE)))[,2]
 
 df2_min$min_45 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(min_45 = min(T_45, na.rm=TRUE)))[,2]
+                    summarise(min_45 = min(M_45, na.rm=TRUE)))[,2]
 
 df2_min$min_55 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(min_55 = min(T_55, na.rm=TRUE)))[,2]
+                    summarise(min_55 = min(M_55, na.rm=TRUE)))[,2]
 
 df2_min$min_65 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(min_65 = min(T_65, na.rm=TRUE)))[,2]
+                    summarise(min_65 = min(M_65, na.rm=TRUE)))[,2]
 
 df2_min$min_75 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(min_75 = min(T_75, na.rm=TRUE)))[,2]
+                    summarise(min_75 = min(M_75, na.rm=TRUE)))[,2]
 
 df2_min$min_85 = (df2 %>%
                     group_by(date_hour) %>%
-                    summarise(min_85 = min(T_85, na.rm=TRUE)))[,2]
+                    summarise(min_85 = min(M_85, na.rm=TRUE)))[,2]
 
 
 
@@ -339,39 +329,39 @@ df3 = df#predictor_set_2
 
 df3_max = df3 %>%
                   group_by(land_use) %>%
-                  summarise(max_05 = max(T_05, na.rm=TRUE))
+                  summarise(max_05 = max(M_05, na.rm=TRUE))
 
 df3_max$max_15 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(max_15 = max(T_15, na.rm=TRUE)))[,2]
+                    summarise(max_15 = max(M_15, na.rm=TRUE)))[,2]
 
 df3_max$max_25 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(max_25 = max(T_25, na.rm=TRUE)))[,2]
+                    summarise(max_25 = max(M_25, na.rm=TRUE)))[,2]
 
 df3_max$max_35 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(max_35 = max(T_35, na.rm=TRUE)))[,2]
+                    summarise(max_35 = max(M_35, na.rm=TRUE)))[,2]
 
 df3_max$max_45 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(max_45 = max(T_45, na.rm=TRUE)))[,2]
+                    summarise(max_45 = max(M_45, na.rm=TRUE)))[,2]
 
 df3_max$max_55 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(max_55 = max(T_55, na.rm=TRUE)))[,2]
+                    summarise(max_55 = max(M_55, na.rm=TRUE)))[,2]
 
 df3_max$max_65 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(max_65 = max(T_65, na.rm=TRUE)))[,2]
+                    summarise(max_65 = max(M_65, na.rm=TRUE)))[,2]
 
 df3_max$max_75 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(max_75 = max(T_75, na.rm=TRUE)))[,2]
+                    summarise(max_75 = max(M_75, na.rm=TRUE)))[,2]
 
 df3_max$max_85 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(max_85 = max(T_85, na.rm=TRUE)))[,2]
+                    summarise(max_85 = max(M_85, na.rm=TRUE)))[,2]
 
 
 
@@ -381,39 +371,39 @@ head(df3_max)
 
 df3_min = df3 %>%
             group_by(land_use) %>%
-            summarise(min_05 = min(T_05, na.rm=TRUE))
+            summarise(min_05 = min(M_05, na.rm=TRUE))
 
 df3_min$min_15 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(min_15 = min(T_15, na.rm=TRUE)))[,2]
+                    summarise(min_15 = min(M_15, na.rm=TRUE)))[,2]
 
 df3_min$min_25 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(min_25 = min(T_25, na.rm=TRUE)))[,2]
+                    summarise(min_25 = min(M_25, na.rm=TRUE)))[,2]
 
 df3_min$min_35 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(min_35 = min(T_35, na.rm=TRUE)))[,2]
+                    summarise(min_35 = min(M_35, na.rm=TRUE)))[,2]
 
 df3_min$min_45 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(min_45 = min(T_45, na.rm=TRUE)))[,2]
+                    summarise(min_45 = min(M_45, na.rm=TRUE)))[,2]
 
 df3_min$min_55 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(min_55 = min(T_55, na.rm=TRUE)))[,2]
+                    summarise(min_55 = min(M_55, na.rm=TRUE)))[,2]
 
 df3_min$min_65 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(min_65 = min(T_65, na.rm=TRUE)))[,2]
+                    summarise(min_65 = min(M_65, na.rm=TRUE)))[,2]
 
 df3_min$min_75 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(min_75 = min(T_75, na.rm=TRUE)))[,2]
+                    summarise(min_75 = min(M_75, na.rm=TRUE)))[,2]
 
 df3_min$min_85 = (df3 %>%
                     group_by(land_use) %>%
-                    summarise(min_85 = min(T_85, na.rm=TRUE)))[,2]
+                    summarise(min_85 = min(M_85, na.rm=TRUE)))[,2]
 
 
 head(df3_max)
@@ -430,7 +420,7 @@ boxplot(range_seasons)
 
 ########################################
 
-boxplot(range_location,range_seasons,test$range, names=c("space","time","depth"),ylim=c(0,40),ylab="Soil Temperature [°C]")
+boxplot(range_location,range_seasons,test$range, names=c("space","time","depth"),ylim=c(0,40),ylab="Soil Moisture [%]")
 
 ########################################
 

@@ -19,7 +19,7 @@ raster_base = static_raster$elevation*0
 #mapview::mapview(raster_base)
 
 
-testfolder <- "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/radolan_data/"
+testfolder <- "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/radolan_data_24hsum/"
 
 #############################################################################
 #############################################################################
@@ -79,13 +79,13 @@ testfolder <- "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_
 
 #mapview::mapview(radolan_study_site[[11]])+mapview::mapview(radolan_germany[[11]])+mapview::mapview(dwd_crop[[11]])
 
-files <- list.files(testfolder,pattern=".asc$", full.names=TRUE)
+files <- list.files(testfolder,pattern="bin$", full.names=TRUE)
 
 #####################################################################
 
-date_time = substr(files, 90,102) 
+date_time = substr(files, 109,118) 
 
-date = substr(files, 90,97) 
+date = substr(files, 109,114) 
 
 dates_all = as.numeric(paste(unique(date)))
 
@@ -102,11 +102,11 @@ dates_all[1:20]
 
 #LOOP
 
-setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/radolan_data_study_area")
+setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/radolan_data_study_area_24hsum")
 
 Sys.time()
 
-dates <- (dates_all[1:31])#dates_all#c
+dates <- (dates_all[1:4])#dates_all#c
 
 stack_radolan_study_site = raster_base
 
