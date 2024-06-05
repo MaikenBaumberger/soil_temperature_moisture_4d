@@ -3,10 +3,12 @@ library("CAST")
 library("caret")
 #setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/model_results/compare_train_ffs_all_data")
 
-setwd("C:/Users/maike/Desktop/Carbon4D/Palma/soil_moisture_model_v1")
+#setwd("C:/Users/maike/Desktop/Carbon4D/Palma/soil_moisture_model_v1")
+#setwd("C:/Users/maike/Desktop/Carbon4D/Palma/soil_moisture_model_v3")
+setwd("C:/Users/maike/Desktop/Carbon4D/Palma/soil_moisture_model_v4")
 
-load("test_set.Rdata")
-load("train_set.Rdata")
+load("test_set_sm.Rdata")
+load("train_set_sm.Rdata")
 #load("cv_spacetimefolds.Rdata")
 load("rf_model.Rdata")
 load("ffs_model.Rdata")
@@ -49,6 +51,10 @@ numberOfCategories
 
 ###########################################
 
+
+
+test_set <- test_set_sm
+
 test_set[,"prediction"]=round(predict.train(object=ffsmodel, newdata = test_set,na.action = na.omit),
                               digits = 2)
 head(test_set)
@@ -62,6 +68,17 @@ boxplot(test_set$difference)
 plot(test_set$soil_moisture,test_set$prediction,ylim=c(0,35),xlim=c(0,35),
      pch=19,col=alpha("black",0.05),xlab="soil moisture truth [%]",ylab="soil moisture prediction [%]")
 abline(coef = c(0,1))
+
+
+
+plot(test_set$date_hour,test_set$soil_moisture)
+points(test_set$date_hour,test_set$prediction,col="red")
+
+test_set_05 = subset(test_set,depths==5)
+plot(test_set_05$date_hour,test_set_05$soil_moisture)
+points(test_set_05$date_hour,test_set_05$prediction,col="red")
+
+
 
 colors <- c("#66BD63", # Darker green
             "#FDAE61", # Orange
@@ -103,10 +120,29 @@ legend("topleft", col=pal(2), pch=19,title ="precipitation sum 3 month",
 #############################################
 
 
-boxplot(test_set$difference~test_set$land_use,names=c("forest", "arable land", "meadow"),
-        ylab="difference (true - pred)",xlab="land use")
+b = boxplot(test_set$difference~test_set$land_use,names=c("forest", "arable land", "meadow"),
+        ylab="difference (true - pred)",xlab="land use",ylim=c(0,23))
+text(1:length(b$n), 23, paste(b$n))
 
-boxplot(test_set$difference~test_set$depth,ylab="difference (true - pred)",xlab="depth")
+b= boxplot(test_set$difference~test_set$depth,ylab="difference (true - pred)",xlab="depth",ylim=c(0,23))
+text(1:length(b$n), 23, paste(b$n))
+
+
+boxplot(test_set$difference~test_set$probe_name,ylab="difference (true - pred)",xlab="location")
+
+test_set$elevation_category  <- cut(test_set$elevation, c(-Inf, 550, 600, 650, 700, 750, Inf), labels=c( "500", "550", "600", "650","700","750"))
+test_set$elevation_category[1]
+test_set$elevation[1]
+
+b = boxplot(test_set$difference~test_set$elevation_category,ylab="difference (true - pred)",xlab="elevataion",ylim=c(0,23))
+text(1:length(b$n), 23, paste(b$n))
+
+test_set$moisture_category  <- cut(test_set$soil_moisture, c(-Inf, 10, 20, 30, Inf), labels=c( "0-10", "10-20", "20-30", "30-40"))
+test_set$moisture_category[1]
+test_set$soil_moisture[1]
+
+b = boxplot(test_set$difference~test_set$moisture_category,ylab="difference (true - pred)",xlab="moisture",ylim=c(0,23))
+text(1:length(b$n), 23, paste(b$n))
 
 # 
 # plot(test_set$date_hour,test_set$dif)

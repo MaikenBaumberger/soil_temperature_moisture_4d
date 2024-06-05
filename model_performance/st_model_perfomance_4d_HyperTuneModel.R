@@ -5,16 +5,19 @@ library(CAST)
 
 #setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d/soil_temperature_moisture_4d/model_results/compare_train_ffs")
 #setwd("C:/Users/maike/Desktop/Carbon4D/Palma/soil_temperature_model_v2")
-setwd("C:/Users/maike/Desktop/Carbon4D/Palma/soil_temperature_model_v3")
+#setwd("C:/Users/maike/Desktop/Carbon4D/Palma/soil_temperature_model_v3")
+setwd("C:/Users/maike/Desktop/Carbon4D/Palma/hyperparameter_tuning_2")
 
 load("test_set_st.Rdata")
 load("train_set_st.Rdata")
-load("cv_spacetimefolds.Rdata")
-load("rf_model.Rdata")
-load("ffs_model.Rdata")
+#load("cv_spacetimefolds.Rdata")
+load("rfmodel_st.Rdata")
+#load("ffs_model.Rdata")
 
 rfmodel
-ffsmodel
+ffsmodel <- rfmodel
+
+test_set <- test_set_st
 
 varImp(ffsmodel)
 plot(varImp(ffsmodel))
@@ -26,11 +29,11 @@ plot(varImp(rfmodel))
 #plot(rfmodel$pred$pred,rfmodel$pred$obs,ylim=c(-5,30),xlim=c(-5,30))
 #abline(coef = c(0,1))
 
-#ffs
+ffs
 plot(ffsmodel$pred$pred,ffsmodel$pred$obs,ylim=c(0,36),xlim=c(0,36))
 abline(coef = c(0,1))
 
-ffsmodel
+#ffsmodel
 
 ###########################################
 #test set
@@ -43,42 +46,48 @@ test_set$difference = abs(test_set$soil_temperature-test_set$prediction)
 
 mean(test_set$difference)
 
+sqrt(mean((test_set$soil_temperature-test_set$prediction)^2))
+
+rsq <- function (x, y) cor(x, y) ^ 2
+rsq(test_set$soil_temperature,test_set$prediction)
+
+
 plot(test_set$soil_temperature,test_set$prediction,ylim=c(-1,34),xlim=c(-1,34),
      pch=19,col=alpha("black",0.05),xlab="soil temperature truth [%]",ylab="soil temperature prediction [%]")
 abline(coef = c(0,1))
 
-
-pal = colorRampPalette(c("blue", "red"))
-test_set$order = findInterval(test_set$trend_3month, sort(test_set$trend_3month))
-plot(test_set$soil_temperature,test_set$prediction,ylim=c(-1,34),xlim=c(-1,34),
-     pch=19,col=alpha(pal(nrow(test_set))[test_set$order],0.03),
-     xlab="soil temperature truth [%]",ylab="soil temperature prediction [%]")
-abline(coef = c(0,1))
-legend("topleft", col=pal(2), pch=19,title ="trend 3 month",
-       legend=c(round(range(test_set$trend_3month), 3)))
-
-pal = colorRampPalette(c("blue", "red"))
-test_set$order = findInterval(test_set$prec_sum_4_month, sort(test_set$prec_sum_4_month))
-plot(test_set$soil_temperature,test_set$prediction,ylim=c(-1,34),xlim=c(-1,34),
-     pch=19,col=alpha(pal(nrow(test_set))[test_set$order],0.03),
-     xlab="soil temperature truth [%]",ylab="soil temperature prediction [%]")
-abline(coef = c(0,1))
-legend("topleft", col=pal(2), pch=19,title ="precipitation sum 4 month",
-       legend=c(round(range(test_set$prec_sum_4_month), 3)))
-
-
-colors <- c("#66BD63", # Darker green
-            "#FDAE61", # Orange
-            "#D9EF8B") # Light green
-             
-plot(test_set$soil_temperature,test_set$prediction,ylim=c(-1,34),xlim=c(-1,34),
-     pch=19,col = alpha(colors[factor(test_set$land_use)],0.03),
-     xlab="soil temperature truth [%]",ylab="soil temperature prediction [%]")
-abline(coef = c(0,1))
-legend("topleft",
-       legend = c("Forest", "Arable land", "Meadow"),
-       pch = 19,
-       col = colors)
+# 
+# pal = colorRampPalette(c("blue", "red"))
+# test_set$order = findInterval(test_set$trend_3month, sort(test_set$trend_3month))
+# plot(test_set$soil_temperature,test_set$prediction,ylim=c(-1,34),xlim=c(-1,34),
+#      pch=19,col=alpha(pal(nrow(test_set))[test_set$order],0.03),
+#      xlab="soil temperature truth [%]",ylab="soil temperature prediction [%]")
+# abline(coef = c(0,1))
+# legend("topleft", col=pal(2), pch=19,title ="trend 3 month",
+#        legend=c(round(range(test_set$trend_3month), 3)))
+# 
+# pal = colorRampPalette(c("blue", "red"))
+# test_set$order = findInterval(test_set$prec_sum_4_month, sort(test_set$prec_sum_4_month))
+# plot(test_set$soil_temperature,test_set$prediction,ylim=c(-1,34),xlim=c(-1,34),
+#      pch=19,col=alpha(pal(nrow(test_set))[test_set$order],0.03),
+#      xlab="soil temperature truth [%]",ylab="soil temperature prediction [%]")
+# abline(coef = c(0,1))
+# legend("topleft", col=pal(2), pch=19,title ="precipitation sum 4 month",
+#        legend=c(round(range(test_set$prec_sum_4_month), 3)))
+# 
+# 
+# colors <- c("#66BD63", # Darker green
+#             "#FDAE61", # Orange
+#             "#D9EF8B") # Light green
+#              
+# plot(test_set$soil_temperature,test_set$prediction,ylim=c(-1,34),xlim=c(-1,34),
+#      pch=19,col = alpha(colors[factor(test_set$land_use)],0.03),
+#      xlab="soil temperature truth [%]",ylab="soil temperature prediction [%]")
+# abline(coef = c(0,1))
+# legend("topleft",
+#        legend = c("Forest", "Arable land", "Meadow"),
+#        pch = 19,
+#        col = colors)
 
 #############################################
 
@@ -91,7 +100,11 @@ boxplot(test_set$difference~test_set$depth,ylab="difference (true - pred)",xlab=
 test_set$month = lubridate::month(as.POSIXlt(test_set$date_hour, format="%Y-%m-%d %H:%M:%S %Z"))
 boxplot(test_set$difference~test_set$month,ylab="difference (true - pred)",xlab="month")
 
-boxplot(test_set$difference~test_set$probe_name,ylab="difference (true - pred)",xlab="location")
+#boxplot(test_set$difference~test_set$probe_name,ylab="difference (true - pred)",xlab="location")
+
+
+
+
 
 
 ############################################

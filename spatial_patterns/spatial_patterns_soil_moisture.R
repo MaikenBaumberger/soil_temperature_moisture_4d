@@ -2,13 +2,15 @@
 library(raster)
 library(terra)
 
-st_pred_folder <- "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/soil_temperature_prediction_v2"
-#st_pred_folder <- "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_plots/ffs_selection/moisture_15_12"
+#st_pred_folder <- "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/soil_temperature_prediction_v2"
+st_pred_folder <- "C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_plots/ffs_selection/moisture_15_12"
 st_pred_files <- list.files(st_pred_folder,pattern=".tif$", full.names=TRUE)
 
 static_raster= terra::rast("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/static_raster_variables/static_raster.tif")
 names(static_raster) = c("soil_texture","soil_type","elevation","land_use","inclination","exposition",
                          "topo_wetness","northness","eastness")
+
+plot(static_raster$soil_type)
 
 land_use <- static_raster$land_use
 
@@ -328,7 +330,7 @@ dat = data.frame(depth,mean,sd,landuse_cat)
 
 library(ggplot2)
 ggplot(dat, aes(x = mean, y = depth, color=landuse_cat)) +
-  geom_point(size=2) +
+  geom_point(size=2)+
   #geom_ribbon(aes(xmin = mean - sd,
   #                xmax = mean + sd), alpha = 0.2)
   geom_errorbar(aes(xmin=mean-sd, xmax=mean+sd), width=1.2, 
@@ -342,16 +344,15 @@ ggplot(dat, aes(x = mean, y = depth, color=landuse_cat)) +
         axis.text.x   = element_text(size=14),
         axis.title.y  = element_text(size=14),
         axis.title.x  = element_text(size=14))+
-  xlab("Soil temperature [°C]")+
+  xlab("Soil moisture [%]")+
   scale_y_continuous(breaks = seq(-5, -75, by = -10))+
   scale_color_manual(values = c("forest" = "#238A8DFF", "meadow" = "#73D055FF", "arable_land" = "#FDE725FF"))+
-  xlim(0, 18)
+  xlim(10, 24)
   theme(legend.position = c(0.12,0.8),
         legend.key=element_blank(),
         legend.title = element_blank(),
-        legend.text=element_text(size=14))+
-  scale_color_manual(values = c("forest" = "#238A8DFF", "meadow" = "#73D055FF", "arable_land" = "#FDE725FF"))+
-  xlim(0, 18)
+        legend.text=element_text(size=14))
+
 
 
 
@@ -794,12 +795,6 @@ landuse_cat = c("forest","meadow","arable_land",
 
 dat2 = data.frame(month,mean,sd,landuse_cat)
 
-#Create a custom color scale
-library(RColorBrewer)
-#myColors <- brewer.pal(3,"viridis")
-#names(myColors) <- levels(dat$grp)
-#colScale <- scale_colour_manual(name = "grp",values = myColors)
-
 
 library(ggplot2)
 ggplot(dat2, aes(x = month, y = mean, color=landuse_cat)) +
@@ -817,20 +812,14 @@ ggplot(dat2, aes(x = month, y = mean, color=landuse_cat)) +
         axis.text.x   = element_text(size=14),
         axis.title.y  = element_text(size=14),
         axis.title.x  = element_text(size=14))+
-  ylab("Soil temperature [°C]")+
+  ylab("Soil moisture [%]")+
   scale_x_discrete(limits=c("1","2","3","4","5","6","7","8","9","10","11","12"))+
-  theme(legend.position = c(0.12,0.8),
+  theme(legend.position = c(0.12,10.8),
         legend.key=element_blank(),
         legend.title = element_blank(),
         legend.text=element_text(size=14))+
   scale_color_manual(values = c("forest" = "#238A8DFF", "meadow" = "#73D055FF", "arable_land" = "#FDE725FF"))
   
-var_depth_st <-dat
-var_time_st <-dat2
-
-setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/4d_variability_landuse")
-saveRDS(var_depth_st, "var_depth_st.rds")
-saveRDS(var_time_st, "var_time_st.rds")
 
   
   # theme(panel.border = element_blank(),
@@ -843,6 +832,12 @@ saveRDS(var_time_st, "var_time_st.rds")
   #                                       size = 0.5, linetype = "solid"))
   # 
 
+
+var_depth_sm <-dat
+var_time_sm <-dat2
+setwd("C:/Users/maike/Desktop/Carbon4D/GitHub_soil_temperature_moisture_4d_data/4d_variability_landuse")
+saveRDS(var_depth_sm, "var_depth_sm.rds")
+saveRDS(var_time_sm, "var_time_sm.rds")
 
 
 # 
